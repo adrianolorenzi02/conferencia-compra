@@ -30,7 +30,7 @@ export const useConference = () => {
             descricao: 'BISCOITO RECHEADO CHOCOLATE 150G',
             quantidade: 24,
             unidade: 'UN',
-            codigoBarras: ['7891234567890', '17891234567897012345']
+            codigoBarras: ['7891234567890', '17891234567897012345'] // EAN13 e DUN14
           },
           {
             id: '2',
@@ -53,10 +53,11 @@ export const useConference = () => {
 
       setNotaFiscal(mockNF);
       
-      const items: ConferenceItem[] = mockNF.itens.map(item => ({
+      const items: ConferenceItem[] = mockNF.itens.map((item, index) => ({
         ...item,
         quantidadeConferida: 0,
-        status: 'pendente'
+        status: 'pendente',
+        unidadesPorCaixa: index === 0 ? 12 : undefined // Simular DUN14 para primeiro item
       }));
       
       setConferenceItems(items);
@@ -138,9 +139,22 @@ export const useConference = () => {
       }
     }
 
+    // Determinar tipo de código (DUN14 vs EAN13) e quantidade a adicionar
+    const isDUN14 = barcode.length === 14;
+    const quantidadeAAdicionar = isDUN14 && foundItem.unidadesPorCaixa 
+      ? foundItem.unidadesPorCaixa 
+      : 1;
+    
     // Atualizar quantidade
-    const novaQuantidade = foundItem.quantidadeConferida + 1;
+    const novaQuantidade = foundItem.quantidadeConferida + quantidadeAAdicionar;
     let novoStatus: ConferenceItem['status'];
+    
+    if (isDUN14 && foundItem.unidadesPorCaixa) {
+      toast({
+        title: "Código DUN14 detectado",
+        description: `Adicionadas ${foundItem.unidadesPorCaixa} unidades da caixa`,
+      });
+    }
 
     if (novaQuantidade > foundItem.quantidade) {
       novoStatus = 'excedente';

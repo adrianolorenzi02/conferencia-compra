@@ -135,48 +135,15 @@ export const ConferencePage = () => {
 
       case 'conference':
         return (
-          <div className="space-y-6">
+          <div className="space-y-4">
             {renderStepIndicator()}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 max-w-7xl mx-auto">
-              {/* Scanner de produtos */}
-              <div className="space-y-4">
-                <BarcodeScanner
-                  title="Leitura de Produtos"
-                  placeholder="Digite o código de barras do produto"
-                  onScan={(barcode, lote, validade) => processProductBarcode(barcode, lote, validade)}
-                  showLoteFields={true}
-                />
-                
-                <Card className="bg-gradient-card shadow-card border-border/50">
-                  <CardHeader>
-                    <CardTitle className="text-sm text-muted-foreground text-center">
-                      Dicas importantes
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent className="space-y-2 text-sm text-muted-foreground">
-                    <div className="flex items-start gap-2">
-                      <Badge variant="outline" className="text-xs">•</Badge>
-                      <p>Escaneie cada produto individualmente</p>
-                    </div>
-                    <div className="flex items-start gap-2">
-                      <Badge variant="outline" className="text-xs">•</Badge>
-                      <p>Informe lote e validade quando disponível</p>
-                    </div>
-                    <div className="flex items-start gap-2">
-                      <Badge variant="outline" className="text-xs">•</Badge>
-                      <p>Verifique produtos com validade inferior a 1 ano</p>
-                    </div>
-                  </CardContent>
-                </Card>
-              </div>
-
-              {/* Progresso da conferência */}
-              <div>
-                <ConferenceProgress 
-                  items={conferenceItems}
-                  onFinish={finishConference}
-                />
-              </div>
+            <div className="max-w-2xl mx-auto">
+              <BarcodeScanner
+                title="Leitura de Produtos"
+                placeholder="Digite o código de barras do produto"
+                onScan={(barcode, lote, validade) => processProductBarcode(barcode, lote, validade)}
+                showLoteFields={true}
+              />
             </div>
           </div>
         );
@@ -198,18 +165,21 @@ export const ConferencePage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background p-4">
-      <div className="container mx-auto">
-        {/* Header */}
-        <div className="text-center mb-8">
-          <h1 className="text-3xl md:text-4xl font-bold bg-gradient-primary bg-clip-text text-transparent mb-2">
-            Conferência de Nota Fiscal
-          </h1>
-          <p className="text-muted-foreground">
-            Sistema de conferência de produtos para notas fiscais de compra
-          </p>
+    <div className="min-h-screen bg-background">
+      {/* Progress Header fixo */}
+      {(currentStep === 'conference' || currentStep === 'results') && (
+        <div className="sticky top-0 z-10 bg-background/95 backdrop-blur-sm border-b border-border/50 p-2">
+          <div className="container mx-auto">
+            <ConferenceProgress 
+              items={conferenceItems}
+              onFinish={finishConference}
+              compact={true}
+            />
+          </div>
         </div>
-
+      )}
+      
+      <div className="container mx-auto px-4 py-2">
         {/* Current Step Content */}
         {renderCurrentStep()}
       </div>

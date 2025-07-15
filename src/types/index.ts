@@ -25,6 +25,7 @@ export interface ConferenceItem extends NFItem {
   loteConferido?: string;
   validadeConferida?: string;
   validadeVencida?: boolean;
+  unidadesPorCaixa?: number; // Para códigos DUN14
 }
 
 export interface BarcodeResult {
