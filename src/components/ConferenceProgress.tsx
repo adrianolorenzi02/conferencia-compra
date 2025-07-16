@@ -81,10 +81,7 @@ export const ConferenceProgress = ({ items, onFinish, compact = false }: Confere
                 </div>
               </div>
             </div>
-            <Button onClick={onFinish} size="sm" variant="success">
-              <Flag className="h-4 w-4 mr-1" />
-              Finalizar
-            </Button>
+            {/* Botão removido do cabeçalho compacto */}
           </div>
           <Progress value={progressPercentage} className="h-2 mt-2" />
         </CardContent>

@@ -5,6 +5,7 @@ import { ConferenceProgress } from '@/components/ConferenceProgress';
 import { ConferenceResults } from '@/components/ConferenceResults';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { ClipboardCheck, Scan, FileText, BarChart3 } from 'lucide-react';
 
@@ -137,13 +138,67 @@ export const ConferencePage = () => {
         return (
           <div className="space-y-4">
             {renderStepIndicator()}
-            <div className="max-w-2xl mx-auto">
-              <BarcodeScanner
-                title="Leitura de Produtos"
-                placeholder="Digite o código de barras do produto"
-                onScan={(barcode, lote, validade) => processProductBarcode(barcode, lote, validade)}
-                showLoteFields={true}
-              />
+            <div className="space-y-4">
+              <div className="max-w-2xl mx-auto">
+                <BarcodeScanner
+                  title="Leitura de Produtos"
+                  placeholder="Digite o código de barras do produto"
+                  onScan={(barcode, lote, validade) => processProductBarcode(barcode, lote, validade)}
+                  showLoteFields={true}
+                />
+              </div>
+              
+              {/* Lista de itens com quantidades */}
+              <div className="space-y-2">
+                {conferenceItems.map((item) => (
+                  <div
+                    key={item.id}
+                    className="p-3 bg-card border border-border rounded-lg cursor-pointer hover:bg-accent/5 transition-colors"
+                    onClick={() => processProductBarcode(item.codigoBarras[0])}
+                  >
+                    <div className="flex justify-between items-start">
+                      <div className="flex-1 min-w-0">
+                        <p className="font-medium text-foreground text-sm leading-tight">{item.descricao}</p>
+                        <p className="text-xs text-muted-foreground mt-1">
+                          Código: {item.codigo}
+                        </p>
+                      </div>
+                      <div className="text-right ml-3">
+                        <div className={`text-sm font-semibold ${
+                          item.quantidadeConferida > item.quantidade 
+                            ? 'text-destructive' 
+                            : item.quantidadeConferida === item.quantidade
+                            ? 'text-success'
+                            : 'text-warning'
+                        }`}>
+                          {item.quantidadeConferida} / {item.quantidade}
+                        </div>
+                        <div className="text-xs text-muted-foreground">
+                          {item.unidade}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+              
+              {/* Botões de ação */}
+              <div className="flex gap-2 pt-4">
+                <Button 
+                  variant="outline" 
+                  onClick={resetConference}
+                  className="flex-1"
+                >
+                  Cancelar
+                </Button>
+                <Button 
+                  onClick={finishConference}
+                  variant="default"
+                  className="flex-1"
+                >
+                  Finalizar
+                </Button>
+              </div>
             </div>
           </div>
         );
@@ -167,12 +222,12 @@ export const ConferencePage = () => {
   return (
     <div className="min-h-screen bg-background">
       {/* Progress Header fixo */}
-      {(currentStep === 'conference' || currentStep === 'results') && (
+      {currentStep === 'conference' && (
         <div className="sticky top-0 z-10 bg-background/95 backdrop-blur-sm border-b border-border/50 p-2">
           <div className="container mx-auto">
             <ConferenceProgress 
               items={conferenceItems}
-              onFinish={finishConference}
+              onFinish={() => {}} // Removido do cabeçalho
               compact={true}
             />
           </div>
